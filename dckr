@@ -1,0 +1,57 @@
+#!/bin/bash
+
+DOCKER_PATH="$HOME/git/fod_docker"
+cd $DOCKER_PATH
+
+# Array of all functions (that have the function prefix)
+FUNCS=($(grep "^function" $0 | sed -e 's/function //' -e 's/ {//g' | sed ':a;N;$!ba;s/\n/ /g'))
+
+# source .env if it exists
+if [ -f .env ]; then
+    source .env
+fi
+
+printUsage() {
+    echo "Usage: $0 "$(IFS=\|; echo "${FUNCS[*]}")
+    exit 1;
+}
+
+function start {
+    docker-compose up -d
+}
+
+function stop {
+    docker-compose down
+}
+
+function mysql {
+    mysql -u root -proot -h 127.0.0.1
+}
+
+function compose {
+    docker-compose $@
+}
+
+# If there is no param, or param is a variation of --help
+if [ -z $1 ] || [[ "$1" =~ ^((-{1,2})([Hh]$|[Hh][Ee][Ll][Pp]))$ ]]; then
+    printUsage;
+    exit 1
+else
+    # If param is an exact match for a function, call it directly
+    for i in "${FUNCS[@]}"; do if [ "$i" == "$1" ]; then $1; exit 0; fi; done
+
+    # Otherwise, loop through these
+    while [[ $# -gt 0 ]]; do
+        opt="$1"
+        shift;
+        current_arg="$1"
+
+        case "$opt" in
+            "-v"|"--verbose"	) VERBOSE=1; shift;;
+            "restart"		) stop && start; exit 0;;
+            *			) printUsage; exit 1;;
+        esac
+    done
+fi
+
+exit 0;
