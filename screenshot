@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Bring osx screenshot functionality to linux
+# Will need bindings in keyboard shortcuts:
+# ctrl+alt+4:		screenshot
+# ctrl+alt+3:		screenshot -a
+# ctrl+alt+shift+4:	screenshot -c
+# ctrl+alt+shift+3:	screenshot -ac
+
+SAVE_LOCATION="$HOME/Desktop"
+
+function printUsage {
+	echo "Usage: $0 [-a|--area] [-c|--copy]";
+	exit 1;
+}
+
+if [[ "$1" =~ ^((-{1,2})([Hh]$|[Hh][Ee][Ll][Pp]))$ ]]; then
+    printUsage;
+    exit 1
+else
+	while [[ $# -gt 0 ]]; do
+		opt="$1"
+		shift;
+		current_arg="$1"
+
+		if [[ "$current_arg" =~ ^-{1,2}.* ]]; then
+			echo "test";
+		fi
+
+		case "$opt" in
+			"-a"|"--area"	) AREA=1; shift;;
+			"-c"|"--copy"	) COPY=1; shift;;
+			"-ac"|"-ca"	) AREA=1; COPY=1; shift;;
+			*		) echo "Error: $0: Invalid option \"$opt\"" >&2
+						exit 1;;
+		esac
+	done
+fi
+
+COMMAND="gnome-screenshot "
+
+if [ ! -z ${AREA+x} ]; then
+	COMMAND="$COMMAND -a"
+fi
+
+if [ ! -z ${COPY+x} ]; then
+	COMMAND="$COMMAND -c"
+else
+	FILENAME="$SAVE_LOCATION/$(date +%Y-%m-%d_%H:%M:%S)_screenshot.png"
+	COMMAND="$COMMAND -f $FILENAME"
+fi
+
+$($COMMAND)
