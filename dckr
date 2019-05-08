@@ -10,8 +10,16 @@ printUsage() {
 }
 
 # check directory is defined and is a docker compose directory
-if [ -z $1 ] || [ ! -d $1 ] || [ ! -f "$1/docker-compose.yml" ]; then
+if [ -z $1 ]; then
     printUsage
+fi
+if [ ! -d $1 ]; then
+    echo "Error: $0: Directory $1 doesn't exist"
+    exit 1;
+fi
+if [ ! -f "$1/docker-compose.yml" ]; then
+    echo "Error: $0: Directory $1 is not a docker-compose directory"
+    exit 1;
 fi
 
 DOCKER_PATH="$1";
