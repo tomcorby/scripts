@@ -48,6 +48,10 @@ function compose {
     docker-compose $@
 }
 
+function exec {
+    docker-compose exec $@
+}
+
 # If first arg exists as a function, execute it and pass rest of args in
 for i in "${FUNCS[@]}"
 do
