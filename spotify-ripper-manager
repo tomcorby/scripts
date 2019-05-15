@@ -29,4 +29,6 @@ done
 mv log $(date '+%Y-%m-%d %H:%M').log
 mv faillog $(date '+%Y-%m-%d %H:%M').faillog
 
+# rclone move $DIR/music onedrive:/Music
+
 exit;
