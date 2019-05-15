@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR=/home/tom
-LINE_LIMIT=50
+LINE_LIMIT=1
 
 cd $DIR;
 
@@ -21,9 +21,11 @@ fi
 split -l$LINE_LIMIT list list
 rm list
 
-for f in list[a-z][a-z];
-    #do the deed
-    spotify-ripper $f && rm $f;
+#do the deed
+for f in list[a-z][a-z]; do
+    echo $f;
+    spotify-ripper $f;
+    rm $f;
 done
 
 mv log $(date '+%Y-%m-%d_%H:%M').log
@@ -31,6 +33,8 @@ mv faillog $(date '+%Y-%m-%d_%H:%M').faillog
 
 rclone move -v $DIR/music onedrive:/Music
 
-find $DIR/music -type d -empty -delete
+cd $DIR/music
+
+find . -type d -empty -delete
 
 exit;
