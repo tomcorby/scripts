@@ -1,0 +1,31 @@
+#!/bin/bash
+
+DIR=/home/tom
+LINE_LIMIT=50
+
+cd $DIR;
+
+# is spotify-ripper already running
+if pgrep -x spotify-ripper > /dev/null; then
+    echo "Already running"
+    exit 1;
+fi
+
+# do we have a list file
+if [ ! -f list ]; then
+    echo "No list file exists"
+    exit 2;
+fi
+
+#split list file up
+split -l$LINE_LIMIT list list
+rm list
+
+for f in list[a-z][a-z];
+    #do the deed
+    spotify-ripper $f && rm $f;
+done
+
+#maybe move log/faillog to a timestamped version of the name to avoid losing history
+
+exit;
