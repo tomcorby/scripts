@@ -26,6 +26,7 @@ for f in list[a-z][a-z];
     spotify-ripper $f && rm $f;
 done
 
-#maybe move log/faillog to a timestamped version of the name to avoid losing history
+mv log $(date '+%Y-%m-%d %H:%M').log
+mv faillog $(date '+%Y-%m-%d %H:%M').faillog
 
 exit;
