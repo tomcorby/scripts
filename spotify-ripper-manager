@@ -19,7 +19,13 @@ fi
 
 #split list file up
 split -l$LINE_LIMIT list list
-rm list
+NOWDATE=$(date '+%Y-%m-%d_%H:%M')
+
+if [ ! -d history ]; then
+    mkdir history
+fi
+
+mv list list-$NOWDATE
 
 #do the deed
 for f in list[a-z][a-z]; do
@@ -28,8 +34,8 @@ for f in list[a-z][a-z]; do
     rm $f;
 done
 
-mv log $(date '+%Y-%m-%d_%H:%M').log
-mv faillog $(date '+%Y-%m-%d_%H:%M').faillog
+mv log history/$NOWDATE.log
+mv faillog history/$NOWDATE.faillog
 
 rclone move -v $DIR/music onedrive:/Music
 
