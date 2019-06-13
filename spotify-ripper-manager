@@ -11,10 +11,15 @@ if pgrep -x spotify-ripper > /dev/null; then
     exit 1;
 fi
 
+if ! [ -x "$(rclone -v foo >/dev/null 2>&1)" ]; then
+    echo "rclone missing. To install run curl https://rclone.org/install.sh | bash"
+    exit 2;
+fi
+
 # do we have a list file
 if [ ! -f list ]; then
     echo "No list file exists"
-    exit 2;
+    exit 3;
 fi
 
 #split list file up
