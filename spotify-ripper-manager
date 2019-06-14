@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=/home/tom
+DIR=/root
 LINE_LIMIT=1
 
 cd $DIR;
@@ -9,11 +9,6 @@ cd $DIR;
 if pgrep -x spotify-ripper > /dev/null; then
     echo "Already running"
     exit 1;
-fi
-
-if ! [ -x "$(command -v rclone >/dev/null 2>&1)" ]; then
-    echo "rclone missing. To install run curl https://rclone.org/install.sh | bash"
-    exit 2;
 fi
 
 # do we have a list file
