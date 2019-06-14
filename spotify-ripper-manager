@@ -32,6 +32,10 @@ fi
 
 mv list list-$NOWDATE
 
+if [ ! -d music ]; then
+    mkdir music
+fi
+
 #do the deed
 for f in list[a-z][a-z]; do
     echo $f;
