@@ -41,7 +41,15 @@ function stop {
 }
 
 function restart {
-    stop && start
+
+    if [[ $(docker-compose ps -q) == "" ]]; then
+        read -p "Not running. Start? (Y/n): " CONT
+        if [ "$CONT" == "y" ] || [ "$CONT" == "Y" ] || [ "$CONT" == "" ]; then
+            start
+        fi
+    else
+        stop && start
+    fi
 }
 
 function compose {
