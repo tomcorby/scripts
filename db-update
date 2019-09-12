@@ -9,6 +9,18 @@ if [ -z $1 ]; then
     printUsage
 fi
 
+if ! [ $(command -v mysqlshow) ]; then
+    echo 'Error: $0: mysqlshow is not installed. Install mysql-client or mariadb-client'
+fi
+
+if ! [ $(command -v pv) ]; then
+    echo 'Error: $0: pv is not installed. Install pv'
+fi
+
+if ! [ $(command -v gunzip) ]; then
+    echo 'Error: $0: gunzip is not installed. Install gunzip'
+fi
+
 database=$1
 local_db_name=${2:-$database}
 database_backup="$1_backup"
