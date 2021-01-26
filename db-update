@@ -33,7 +33,7 @@ if [ "$local_database_exists" == "$local_db_name" ]; then
     done;
 fi
 
-rsync -ravP dev2:/home/dumpy/$database.sql.gz /tmp/$database.sql.gz
+rsync -ravP tomc@dev2:/home/dumpy/$database.sql.gz /tmp/$database.sql.gz
 
 mysql -u root -proot -h 127.0.0.1 -e "create database if not exists $database;"
 
