@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Adapted from github.com/danrabinowitz/sshrc
+
+# Display regular SSH help if there is no params
+if [ -z $1 ]; then
+    ssh
+    exit 1;
+fi
+
+# Find all local sshrc files, don't fall over if there isn't any
+sshHome=${sshHome:=~}
+localFiles=.sshrc
+
+if [ ! -f "$sshHome/.sshrc" ]; then
+     touch "$sshHome/.sshrc"
+fi
+
+if [ -d "$sshHome/.sshrc.d" ]; then
+    localFiles="$files .sshrc.d"
+fi
+
+# Start the SSH'ing
+ssh -t ${*:1} "
+    export sshHome="'$(mktemp -d)'"
+    echo $'"$(cat `which sshrc` | xxd -ps)"' | xxd -ps -r > "'$sshHome/sshrc'"
+    chmod +x "'$sshHome/sshrc'"
+    echo $'"$( cat << 'EOF' | xxd -ps
+#!/bin/bash
+bash --rcfile <(echo '
+if [ -a /etc/bash.bashrc ]; then source /etc/bash.bashrc; fi
+if [ -a ~/.bashrc ]; then source ~/.bashrc; fi
+source '$sshHome'/.sshrc;
+export PATH=$PATH:'$sshHome'
+')
+EOF
+)"' | xxd -ps -r > "'$sshHome/bashsshrc'"
+            chmod +x "'$sshHome/bashsshrc'"
+            export sshRcCleanup="'$sshHome'"
+            echo $'"$(tar cz -h -C $sshHome $localFiles | xxd -ps)"' | xxd -ps -r | tar mxz -C "'$sshHome'"
+            export sshHome="'$sshHome'"
+            #bash --rcfile <(echo 'if [ -e /etc/bash.bashrc ]; then source /etc/bash.bashrc; fi; if [ -e ~/.bashrc ]; then source ~/.bashrc; fi; source "'$sshHome'"/.sshrc; export PATH="'$PATH'":"'$sshHome'"')
+            "'$sshHome'"/bashsshrc
+            rm -rf "'$sshRcCleanup'" 
+"
+
+# Done
