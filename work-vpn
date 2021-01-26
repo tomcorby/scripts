@@ -1,19 +1,20 @@
 #!/bin/bash
 
-ACTION=${1:-on};
+vpnAction=${1:-on};
+scriptPath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-if [ "$ACTION" != "on" ] && [ "$ACTION" != "off" ]; then
-    ACTION=on
+if [ "$vpnAction" != "on" ] && [ "$vpnAction" != "off" ]; then
+    vpnAction=on
 fi
 
-if [ -f .env ]; then
-    source .env
+if [ -f "$scriptPath/.env" ]; then
+    source "$scriptPath/.env"
 else
     echo -e "No environment file found"
     exit 1;
 fi
 
-if [ "$ACTION" = "on" ]; then
+if [ "$vpnAction" = "on" ]; then
     barracudavpn --start --login $VPN_USERNAME --serverpwd $VPN_PASSWORD
 else
     barracudavpn --stop
