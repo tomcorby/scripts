@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Array of all functions
+FUNCS=($(grep "^function" $0 | sed -e 's/function //' -e 's/ {//g' | sed ':a;N;$!ba;s/\n/ /g'))
+
+#define without function prefix, so FUNCS doesnt include it
+printUsage() {
+    echo "Usage: $0 <product> <environment> "$(IFS=\|; echo "${FUNCS[*]}")
+    exit 1;
+}
+
+# check product and env are defined
+if [ -z $1 ] || [ -z $2 ]; then
+    printUsage
+fi
+
+productParam=$1
+environmentParam=$2
+
+aws ec2 describe-instances --query 'Reservations[].Instances[].[PublicIpAddress, Tags[?Key==`Name`].Value[]]' --filters "Name=tag:Product,Values=$productParam" "Name=tag:Environment,Values=$environmentParam"
